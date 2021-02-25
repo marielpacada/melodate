@@ -1,0 +1,42 @@
+@font-face {
+    font-family: "futura";
+    src: url("/fonts/futura/futura-medium.ttf");
+}
+
+html body { 
+    background-color :#FFF6DE;
+    font-family: "futura", Verdana, Geneva, Tahoma, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header { 
+    text-align: center;
+    padding-top: 20rem;
+}
+
+.header>p { 
+    font-size: 4rem;
+}
+
+.login { 
+    padding: 45rem 5rem 0 5rem;
+}
+
+.block-button {
+    font-size: 3rem;
+    border-radius: 70px;
+    padding: 1.5rem 0 1.5rem;
+    width: 100%;
+    border: solid 4px;
+}
+
+.green-button { 
+    background-color: #EFFFF1;
+}
+
+#logo { 
+    width: 30rem;
+    height: auto;
+    padding-bottom: 7rem;
+}
