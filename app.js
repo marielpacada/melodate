@@ -21,59 +21,102 @@ app.get('/login', function (req, res) {
 });
 
 
-
 app.get('/callback', async function (req, res) {
     const auth_code = await req.query.code || null;
     var auth_options = {
         url: 'https://accounts.spotify.com/api/token',
         method: "POST",
+        json: true,
+        headers: { 'Authorization': 'Basic ' + (new Buffer.from(my_client_id + ':' + my_client_secret).toString('base64')) },
         form: {
             code: auth_code,
             redirect_uri: redirect_uri,
             grant_type: 'authorization_code'
-        },
-        headers: {
-            'Authorization': 'Basic ' + (new Buffer.from(my_client_id + ':' + my_client_secret).toString('base64'))
-        },
-        json: true
+        }
     };
 
     request.post(auth_options, function (error, response, body) {
+        var artist_info;
+
         if (!error && response.statusCode === 200) {
             const access_token = body.access_token;
-
             // getting user's top artists
             var top_artists_options = {
                 url: 'https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term',
                 headers: { 'Authorization': 'Bearer ' + access_token },
                 json: true
             };
-
-            var artist_info;
             request.get(top_artists_options, async function (error, response, body) {
                 var user_artists = body.items;
                 var related_artists = await getRelatedArtists(user_artists, access_token);
                 var initial_pool = getInitialArtistPool(related_artists);
                 var final_pool = await getFinalArtistPool(initial_pool, access_token);
                 artist_info = JSON.parse(JSON.stringify(getArtistInfo(final_pool.artists)));
-                console.log(artist_info);
-
             });
-
-            // res.redirect("/landing");
-            res.render("landing", { artists: artist_info });
-
+            res.set({ "artists": artist_info }); // SEND A COOKIE?????? :OOO
+            res.redirect("/landing");
         } else {
-            res.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
+            res.redirect('/#' + querystring.stringify({ error: 'sinvalid_token' }));
         }
     });
 });
 
-// app.get("/landing", function (req, res) {
-//     // console.log(artist_info); // WHY IS THIS EMPTY
+// console.log(artist_info);
+
+
+app.get("/landing", function (req, res) {
+    res.sendFile(__dirname + "/public/html/landing.html");
+});
+
+// app.get("/landing", async function (req, res) {
+//     artist_info = await artist_info;
+//     console.log(artist_info);
+
 //     res.render("landing", { artists: artist_info });
 
 // })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
