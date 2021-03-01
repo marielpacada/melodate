@@ -10,11 +10,8 @@ const redirect_uri = "http://localhost:3000/callback";
 
 app.set("view engine", "pug");
 app.set("query parser", "extended");
+app.set("views", __dirname + "/html");
 app.use(express.static("public"));
-
-// TIME FOR HEAVYLIFTING WOO
-// get auth from spotify (watch the black guy's video, desktop 2 hehe)
-// also watch angela's course to review how to use express
 
 app.get('/login', function (req, res) {
     var scopes = 'user-top-read playlist-modify-public user-follow-modify';
@@ -23,11 +20,7 @@ app.get('/login', function (req, res) {
         '&redirect_uri=' + encodeURIComponent(redirect_uri)) + "&state=state";
 });
 
-/* ---------------- NOW YOU HAVE USER AUTH, GET ALL THE DATA NEEDED!!! ---------------- */
 
-app.get("/landing", function (req, res) {
-    res.sendFile(__dirname + "/public/html/landing.html")
-});
 
 app.get('/callback', async function (req, res) {
     const auth_code = await req.query.code || null;
@@ -56,63 +49,93 @@ app.get('/callback', async function (req, res) {
                 json: true
             };
 
+            var artist_info;
             request.get(top_artists_options, async function (error, response, body) {
                 var user_artists = body.items;
-
-                var related_artists = {};
-                for (artist in user_artists) {
-                    var artist_id = user_artists[artist].id;
-                    var url = "https://api.spotify.com/v1/artists/" + artist_id + "/related-artists";
-                    var related_artists_options = {
-                        method: "GET",
-                        headers: { 'Authorization': 'Bearer ' + access_token },
-                    };
-            
-                    const result = await fetch(url, related_artists_options);
-                    const item = await result.json();
-                    related_artists[artist] = item;
-                }
-
-
-                var initial_pool = [];
-                for (artist in related_artists) {
-                    for (const x of Array(20).keys()) {
-                        if (!initial_pool.includes(related_artists[artist].artists[x].id) &&
-                            related_artists[artist].artists[x].popularity < 70 &&
-                            related_artists[artist].artists[x].popularity > 60) {
-                            initial_pool.push(related_artists[artist].artists[x].id);
-                        }
-                    }
-                }
-
-                var artist_query = getRandomArtists(initial_pool);
-                var artist_url = "https://api.spotify.com/v1/artists?ids=" + artist_query;
-                var artist_options = {
-                    method: "GET",
-                    headers: { 'Authorization': 'Bearer ' + access_token },
-                };
-                const artist_pool = await fetch(artist_url, artist_options);
-                const final_pool = JSON.parse(JSON.stringify(await artist_pool.json()));
-                // console.log(final_pool.artists);
-                // console.log(final_pool);
-                getArtistInfo(final_pool.artists);
-
-
+                var related_artists = await getRelatedArtists(user_artists, access_token);
+                var initial_pool = getInitialArtistPool(related_artists);
+                var final_pool = await getFinalArtistPool(initial_pool, access_token);
+                artist_info = JSON.parse(JSON.stringify(getArtistInfo(final_pool.artists)));
+                console.log(artist_info);
 
             });
-            res.redirect("/landing");
+
+            // res.redirect("/landing");
+            res.render("landing", { artists: artist_info });
+
         } else {
             res.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
         }
     });
 });
 
+// app.get("/landing", function (req, res) {
+//     // console.log(artist_info); // WHY IS THIS EMPTY
+//     res.render("landing", { artists: artist_info });
+
+// })
+
+
+
+async function getRelatedArtists(userData, token) {
+    var related_artists = {};
+    for (artist in userData) {
+        var artist_id = userData[artist].id;
+        var url = "https://api.spotify.com/v1/artists/" + artist_id + "/related-artists";
+        var related_artists_options = {
+            method: "GET",
+            headers: { 'Authorization': 'Bearer ' + token },
+        };
+
+        const result = await fetch(url, related_artists_options);
+        const item = JSON.parse(JSON.stringify(await result.json()));
+        related_artists[JSON.parse(JSON.stringify(artist))] = item;
+    }
+    return related_artists;
+}
+
+function getInitialArtistPool(data) {
+    var initial_pool = [];
+    for (artist in data) {
+        for (const x of Array(20).keys()) {
+            var id = JSON.parse(JSON.stringify(data[artist].artists[x].id));
+
+            if (!initial_pool.includes(id) &&
+                data[artist].artists[x].popularity < 70 &&
+                data[artist].artists[x].popularity > 60) {
+                initial_pool.push(id);
+            }
+        }
+    }
+    return initial_pool;
+}
+
+async function getFinalArtistPool(initial, token) {
+    var artist_query = getRandomArtists(initial);
+    var artist_url = "https://api.spotify.com/v1/artists?ids=" + artist_query;
+    var artist_options = {
+        method: "GET",
+        headers: { 'Authorization': 'Bearer ' + token },
+    };
+
+    const artist_pool = await fetch(artist_url, artist_options);
+    const final_pool = JSON.parse(JSON.stringify(await artist_pool.json()));
+    return final_pool;
+}
+
 // lessen the shit we have to render
 // for each artist, we need image, name, followers, and genres
 function getArtistInfo(data) {
-    for (const x of Array(50).keys()) { 
-       console.log(data[x].name);
+    var artists = [];
+    for (const x of Array(50).keys()) {
+        var item = {};
+        item["name"] = JSON.parse(JSON.stringify(data[x].name));
+        item["image"] = JSON.parse(JSON.stringify(data[x].images[0].url));
+        item["follow"] = JSON.parse(JSON.stringify(data[x].followers.total));
+        item["genre"] = JSON.parse(JSON.stringify(data[x].genres));
+        artists.push(item);
     }
+    return artists;
 }
 
 function getRandomArtists(arr) {
