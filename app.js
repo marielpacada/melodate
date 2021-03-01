@@ -18,67 +18,24 @@ app.use(express.static("public"));
 
 app.get('/login', function (req, res) {
     var scopes = 'user-top-read playlist-modify-public user-follow-modify';
-    res.redirect('https://accounts.spotify.com/authorize' +
-        '?response_type=code' +
-        '&client_id=' + my_client_id +
-        (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
-        '&redirect_uri=' + encodeURIComponent(redirect_uri)) +
-        "&state=state";
+    res.redirect('https://accounts.spotify.com/authorize' + '?response_type=code' +
+        '&client_id=' + my_client_id + (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
+        '&redirect_uri=' + encodeURIComponent(redirect_uri)) + "&state=state";
 });
 
 /* ---------------- NOW YOU HAVE USER AUTH, GET ALL THE DATA NEEDED!!! ---------------- */
 
-// getting refresh token
-// app.get("/callback", function (req, res) {
-//     getTokens(req, res);
-// });
+app.get("/landing", function (req, res) {
+    res.sendFile(__dirname + "/public/html/landing.html")
+});
 
-// async function getTokens(request, response) {
-//     response.sendFile(__dirname + "/public/pug/landing.html");
-//     const auth_code = request.query.code;
-//     console.log(auth_code);
-//     const url = "https://accounts.spotify.com/api/token";
-//     const body = "?grant_type=authorization_code&code=" + auth_code + "&redirect_uri=" + encodeURIComponent(redirect_uri);
-
-//     const req_params = {
-//         method: "POST",
-//         headers: {
-//             "Authorization": "Basic " + my_client_id_64 + ":" + my_client_secret_64,
-//             'Content-Type': 'application/x-www-form-urlencoded'
-//         }
-//         // body: {
-//         //     "grant_type": "authorization_code",
-//         //     "code": auth_code,
-//         //     "redirect_uri": encodeURIComponent(redirect_uri)
-//         // }
-
-
-//     };
-//     const data = await fetch(url + body, req_params);
-//     console.log(data);
-// }
-app.get('/callback', function (req, res) {
-    // res.sendFile(__dirname + "/public/pug/landing.html");
-
-    // your application requests refresh and access tokens
-    // after checking the state parameter
-
-    var code = req.query.code || null;
-    // var state = req.query.state || null;
-    // var storedState = req.cookies ? req.cookies[stateKey] : null;
-
-    // if (state === null || state !== storedState) {
-    //     res.redirect('/#' +
-    //         querystring.stringify({
-    //             error: 'state_mismatch'
-    //         }));
-    // } else {
-    // res.clearCookie(stateKey);
-
-    var authOptions = {
+app.get('/callback', async function (req, res) {
+    const auth_code = await req.query.code || null;
+    var auth_options = {
         url: 'https://accounts.spotify.com/api/token',
+        method: "POST",
         form: {
-            code: code,
+            code: auth_code,
             redirect_uri: redirect_uri,
             grant_type: 'authorization_code'
         },
@@ -88,39 +45,83 @@ app.get('/callback', function (req, res) {
         json: true
     };
 
-    request.post(authOptions, function (error, response, body) {
+    request.post(auth_options, function (error, response, body) {
         if (!error && response.statusCode === 200) {
+            const access_token = body.access_token;
 
-            // WE GET THE ACCESS TOKENS HERE!!! WOOOO!!!
-
-            var access_token = body.access_token,
-                refresh_token = body.refresh_token;
-
-            var options = {
-                url: 'https://api.spotify.com/v1/me',
+            // getting user's top artists
+            var top_artists_options = {
+                url: 'https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term',
                 headers: { 'Authorization': 'Bearer ' + access_token },
                 json: true
             };
 
-            // getting profile
-            request.get(options, function (error, response, body) {
-                console.log("status code");
-                console.log(response.statusCode);
-            });
+            request.get(top_artists_options, async function (error, response, body) {
+                var user_artists = body.items;
 
-            // we can also pass the token to the browser to make requests from there
-            res.redirect('/#' +
-                querystring.stringify({
-                    access_token: access_token,
-                    refresh_token: refresh_token
-                }));
+                var related_artists = {};
+                for (artist in user_artists) {
+                    var artist_id = user_artists[artist].id;
+                    var url = "https://api.spotify.com/v1/artists/" + artist_id + "/related-artists";
+                    var related_artists_options = {
+                        method: "GET",
+                        headers: { 'Authorization': 'Bearer ' + access_token },
+                    };
+            
+                    const result = await fetch(url, related_artists_options);
+                    const item = await result.json();
+                    related_artists[artist] = item;
+                }
+
+
+                var initial_pool = [];
+                for (artist in related_artists) {
+                    for (const x of Array(20).keys()) {
+                        if (!initial_pool.includes(related_artists[artist].artists[x].id) &&
+                            related_artists[artist].artists[x].popularity < 70 &&
+                            related_artists[artist].artists[x].popularity > 60) {
+                            initial_pool.push(related_artists[artist].artists[x].id);
+                        }
+                    }
+                }
+
+                var artist_query = getRandomArtists(initial_pool);
+                var artist_url = "https://api.spotify.com/v1/artists?ids=" + artist_query;
+                var artist_options = {
+                    method: "GET",
+                    headers: { 'Authorization': 'Bearer ' + access_token },
+                };
+                const artist_pool = await fetch(artist_url, artist_options);
+                const final_pool = JSON.parse(JSON.stringify(await artist_pool.json()));
+                // console.log(final_pool.artists);
+                // console.log(final_pool);
+                getArtistInfo(final_pool.artists);
+
+
+
+            });
+            res.redirect("/landing");
         } else {
-            res.redirect('/#' +
-                querystring.stringify({
-                    error: 'invalid_token'
-                }));
+            res.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
         }
     });
 });
+
+// lessen the shit we have to render
+// for each artist, we need image, name, followers, and genres
+function getArtistInfo(data) {
+    for (const x of Array(50).keys()) { 
+       console.log(data[x].name);
+    }
+}
+
+function getRandomArtists(arr) {
+    var query = "";
+    for (const x of Array(50).keys()) {
+        var artistID = arr[Math.floor(Math.random() * arr.length)];
+        query = query + artistID + "%2C";
+    }
+    return query.slice(0, query.length - 3);
+}
 
 app.listen(3000);
