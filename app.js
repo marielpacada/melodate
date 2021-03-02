@@ -1,17 +1,21 @@
 global.fetch = require("node-fetch");
 const querystring = require('querystring');
 const express = require("express");
-var request = require('request');
+const cookieparser = require("cookie-parser");
+const request = require('request');
 const app = express();
 
 const { my_client_id } = require('./secrets/auth.js');
 const { my_client_secret } = require('./secrets/auth.js');
+const { resolve4 } = require("dns");
 const redirect_uri = "http://localhost:3000/callback";
 
+app.use(cookieparser());
+app.use(express.static("public"));
 app.set("view engine", "pug");
 app.set("query parser", "extended");
 app.set("views", __dirname + "/html");
-app.use(express.static("public"));
+
 
 app.get('/login', function (req, res) {
     var scopes = 'user-top-read playlist-modify-public user-follow-modify';
@@ -27,21 +31,19 @@ app.get('/callback', async function (req, res) {
     var auth_options = {
         url: 'https://accounts.spotify.com/api/token',
         method: "POST",
+        json: true,
+        headers: { 'Authorization': 'Basic ' + (new Buffer.from(my_client_id + ':' + my_client_secret).toString('base64')) },
         form: {
             code: auth_code,
             redirect_uri: redirect_uri,
             grant_type: 'authorization_code'
-        },
-        headers: {
-            'Authorization': 'Basic ' + (new Buffer.from(my_client_id + ':' + my_client_secret).toString('base64'))
-        },
-        json: true
+        }
     };
 
     request.post(auth_options, function (error, response, body) {
+
         if (!error && response.statusCode === 200) {
             const access_token = body.access_token;
-
             // getting user's top artists
             var top_artists_options = {
                 url: 'https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term',
@@ -49,33 +51,26 @@ app.get('/callback', async function (req, res) {
                 json: true
             };
 
-            var artist_info;
-            request.get(top_artists_options, async function (error, response, body) {
-                var user_artists = body.items;
-                var related_artists = await getRelatedArtists(user_artists, access_token);
-                var initial_pool = getInitialArtistPool(related_artists);
-                var final_pool = await getFinalArtistPool(initial_pool, access_token);
-                artist_info = JSON.parse(JSON.stringify(getArtistInfo(final_pool.artists)));
-                console.log(artist_info);
-
+            getUserTopArists(top_artists_options, access_token, function (artists) {
+                var artist_info = JSON.parse(JSON.stringify(artists));
+                res.render("landing", { artist_arr: artist_info });
             });
-
-            // res.redirect("/landing");
-            res.render("landing", { artists: artist_info });
-
         } else {
             res.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
         }
     });
 });
 
-// app.get("/landing", function (req, res) {
-//     // console.log(artist_info); // WHY IS THIS EMPTY
-//     res.render("landing", { artists: artist_info });
-
-// })
-
-
+function getUserTopArists(options, token, callback) {
+    request.get(options, async function (error, response, body) {
+        var user_artists = body.items;
+        var related_artists = await getRelatedArtists(user_artists, token);
+        var initial_pool = getInitialArtistPool(related_artists);
+        var final_pool = await getFinalArtistPool(initial_pool, token);
+        var info = JSON.parse(JSON.stringify(await getArtistInfo(final_pool.artists)));
+        return callback(info);
+    });
+}
 
 async function getRelatedArtists(userData, token) {
     var related_artists = {};
@@ -125,7 +120,7 @@ async function getFinalArtistPool(initial, token) {
 
 // lessen the shit we have to render
 // for each artist, we need image, name, followers, and genres
-function getArtistInfo(data) {
+async function getArtistInfo(data) {
     var artists = [];
     for (const x of Array(50).keys()) {
         var item = {};
