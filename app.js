@@ -1,17 +1,21 @@
 global.fetch = require("node-fetch");
 const querystring = require('querystring');
 const express = require("express");
-var request = require('request');
+const cookieparser = require("cookie-parser");
+const request = require('request');
 const app = express();
 
 const { my_client_id } = require('./secrets/auth.js');
 const { my_client_secret } = require('./secrets/auth.js');
+const { resolve4 } = require("dns");
 const redirect_uri = "http://localhost:3000/callback";
 
+app.use(cookieparser());
+app.use(express.static("public"));
 app.set("view engine", "pug");
 app.set("query parser", "extended");
 app.set("views", __dirname + "/html");
-app.use(express.static("public"));
+
 
 app.get('/login', function (req, res) {
     var scopes = 'user-top-read playlist-modify-public user-follow-modify';
@@ -19,6 +23,7 @@ app.get('/login', function (req, res) {
         '&client_id=' + my_client_id + (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
         '&redirect_uri=' + encodeURIComponent(redirect_uri)) + "&state=state";
 });
+
 
 
 app.get('/callback', async function (req, res) {
@@ -36,7 +41,6 @@ app.get('/callback', async function (req, res) {
     };
 
     request.post(auth_options, function (error, response, body) {
-        var artist_info;
 
         if (!error && response.statusCode === 200) {
             const access_token = body.access_token;
@@ -46,79 +50,27 @@ app.get('/callback', async function (req, res) {
                 headers: { 'Authorization': 'Bearer ' + access_token },
                 json: true
             };
-            request.get(top_artists_options, async function (error, response, body) {
-                var user_artists = body.items;
-                var related_artists = await getRelatedArtists(user_artists, access_token);
-                var initial_pool = getInitialArtistPool(related_artists);
-                var final_pool = await getFinalArtistPool(initial_pool, access_token);
-                artist_info = JSON.parse(JSON.stringify(getArtistInfo(final_pool.artists)));
+
+            getUserTopArists(top_artists_options, access_token, function (artists) {
+                var artist_info = JSON.parse(JSON.stringify(artists));
+                res.render("landing", { artist_arr: artist_info });
             });
-            res.set({ "artists": artist_info }); // SEND A COOKIE?????? :OOO
-            res.redirect("/landing");
         } else {
-            res.redirect('/#' + querystring.stringify({ error: 'sinvalid_token' }));
+            res.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
         }
     });
 });
 
-// console.log(artist_info);
-
-
-app.get("/landing", function (req, res) {
-    res.sendFile(__dirname + "/public/html/landing.html");
-});
-
-// app.get("/landing", async function (req, res) {
-//     artist_info = await artist_info;
-//     console.log(artist_info);
-
-//     res.render("landing", { artists: artist_info });
-
-// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function getUserTopArists(options, token, callback) {
+    request.get(options, async function (error, response, body) {
+        var user_artists = body.items;
+        var related_artists = await getRelatedArtists(user_artists, token);
+        var initial_pool = getInitialArtistPool(related_artists);
+        var final_pool = await getFinalArtistPool(initial_pool, token);
+        var info = JSON.parse(JSON.stringify(await getArtistInfo(final_pool.artists)));
+        return callback(info);
+    });
+}
 
 async function getRelatedArtists(userData, token) {
     var related_artists = {};
@@ -168,7 +120,7 @@ async function getFinalArtistPool(initial, token) {
 
 // lessen the shit we have to render
 // for each artist, we need image, name, followers, and genres
-function getArtistInfo(data) {
+async function getArtistInfo(data) {
     var artists = [];
     for (const x of Array(50).keys()) {
         var item = {};
