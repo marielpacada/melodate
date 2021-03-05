@@ -61,8 +61,8 @@ app.get('/home', async function (req, res) {
             };
 
             // Getting all information needed for home (swiping) page
-            getAllArtistInfo(top_artists_options, access_token, function (artistRes) {
-                var artist_info = JSON.parse(JSON.stringify(artistRes));
+            getAllArtistInfo(top_artists_options, access_token, async function (artistRes) {
+                var artist_info = await JSON.parse(JSON.stringify(artistRes));
                 // Sends artist info as a header (to be iterated in pug file)
                 res.render("landing", { artists: artist_info });
             });
@@ -114,7 +114,7 @@ function getAllArtistInfo(options, token, callback) {
      * @param {*} data the related artist map from previous function
      * Returns array of Spotify Artist objects
      */
-    function _getInitialArtistPool(data) {
+    async function _getInitialArtistPool(data) {
         var initial_pool = [];
         for (artist in data) {
             for (const x of Array(20).keys()) { // Each artist has 20 related artists
@@ -189,7 +189,7 @@ function getAllArtistInfo(options, token, callback) {
     request.get(options, async function (error, response, body) {
         var user_artists = body.items;
         var related_artists = await _getRelatedArtists(user_artists, token);
-        var initial_pool = _getInitialArtistPool(related_artists);
+        var initial_pool = await _getInitialArtistPool(related_artists);
         var final_pool = await _getFinalArtistPool(initial_pool, token);
         var info = JSON.parse(JSON.stringify(await _getEachArtistInfo(final_pool.artists)));
         return callback(info);

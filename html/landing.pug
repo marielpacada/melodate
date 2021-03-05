@@ -1,3 +1,4 @@
+include mixins/_card
 doctype html
 html(lang="en")
 head
@@ -5,21 +6,27 @@ head
 	link(rel='stylesheet' type="text/css" href="html/main_style.css")
 	link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
 	script(type="text/javascript", src="https://kit.fontawesome.com/d9b87cbfce.js")
-	link(rel="preload" href="images/test.jpeg" as="image")
 
 
 body
 	div.swipe
-		div.card
-			img.card-img-top(src="images/test.jpeg")
-			div.card-body 
-				div.artist-name
-					h3.card-title mariel
-					button.bio-btn
-						i.fas.fa-info-circle.fa-2x
-				p.card-subtitle 2,364,908 followers
-				p.card-text synth-pop, future bass, electropop edm
-		
+		each artist in artists
+			+card(artist)
+
+
+
+		//- div.card
+		//- 	img.card-img-top(src="images/test.jpeg")
+		//- 	div.card-body 
+		//- 		div.artist-name
+		//- 			h3.card-title mariel
+		//- 			button.bio-btn
+		//- 				i.fas.fa-info-circle.fa-2x
+		//- 		p.card-subtitle 2,364,908 followers
+		//- 		p.card-text synth-pop, future bass, electropop edm
+		//- 	div.card-choice.reject
+		//- 	div.card-choice.like
+		//- 	div.card-drag
 
 
 

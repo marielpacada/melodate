@@ -1,0 +1,17 @@
+mixin card(artist)  
+	div.artist-card
+
+		div.artist-pic
+			img(src=artist.image)
+
+		div.artist-info
+			div.artist-name
+				h3.card-title #{artist.name}
+				button.bio-btn
+					i.fas.fa-info-circle.fa-2x
+			p.card-subtitle #{artist.follow}
+			//- p.card-text #{artist.genre}
+		
+		div.card-choice.reject
+		div.card-choice.like
+		div.card-drag
