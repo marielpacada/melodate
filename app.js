@@ -2,7 +2,6 @@
 global.fetch = require("node-fetch");
 const querystring = require('querystring');
 const express = require("express");
-const cookieparser = require("cookie-parser");
 const request = require('request');
 const app = express();
 
@@ -12,8 +11,7 @@ const { my_client_secret } = require('./secrets/auth.js');
 const redirect_uri = "http://localhost:3000/home";
 
 /* Registering middleware and settings */
-app.use(cookieparser());
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 app.set("view engine", "pug");
 app.set("query parser", "extended");
 app.set("views", __dirname + "/html");
@@ -22,6 +20,10 @@ app.set("views", __dirname + "/html");
  * Login page. 
  * Redirects user to Spotify authorization page, then redirects back to web app after logging in with Spotify account.
  */
+app.get("/", function(req, res) { 
+    res.sendFile(__dirname + "/public/index.html");
+});
+
 app.get('/login', function (req, res) {
     var scopes = 'user-top-read playlist-modify-public user-follow-modify';
     res.redirect('https://accounts.spotify.com/authorize' + '?response_type=code' +

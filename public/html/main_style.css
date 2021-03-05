@@ -1,0 +1,67 @@
+@font-face {
+    font-family: "futura";
+    src: url("fonts/futura/futura-medium.ttf");
+}
+
+html body {
+    background-color: #FFF6DE;
+    font-family: "futura", Verdana, Geneva, Tahoma, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.swipe {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 15rem;
+}
+
+.card {
+    width: 80%;
+    height: auto;
+}
+
+.card-body { 
+    padding: 3rem !important;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 5rem;
+}
+
+.card-subtitle {
+    color: grey;
+    font-size: 2rem;
+    padding-bottom: 1rem;
+}
+
+.card-text { 
+    font-size: 2.5rem;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.artist-name { 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bio-btn {
+    text-align: center;
+    border: none;
+    background-color: white;
+    padding: 0;
+    margin: 0;
+    color: grey;
+    height: auto;
+  
+}
