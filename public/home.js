@@ -1,4 +1,4 @@
-// import { Cookies } from './cookies.js';
+import { Cookies } from './cookies.js';
 
 $(function () {
     var likes = [];

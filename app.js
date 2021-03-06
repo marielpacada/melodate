@@ -196,7 +196,7 @@ function getAllArtistInfo(options, token, callback) {
 
 /**
  * Styles integer with commas per decimal notations
- * @param {*} x 
+ * @param {*} x integer in primitive form
  */
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -204,7 +204,7 @@ function numberWithCommas(x) {
 
 /**
  * Limits genre to be showed on card to 3, styles list with commas
- * @param {*} arr 
+ * @param {*} arr array of artist genres
  * @returns string that contains artist genres
  */
 function genreHandler(arr) {
