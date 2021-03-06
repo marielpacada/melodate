@@ -20,7 +20,7 @@ app.set("views", __dirname + "/html");
  * Login page. 
  * Redirects user to Spotify authorization page, then redirects back to web app after logging in with Spotify account.
  */
-app.get("/", function(req, res) { 
+app.get("/", function (req, res) {
     res.sendFile(__dirname + "/public/index.html");
 });
 
@@ -89,7 +89,7 @@ function getAllArtistInfo(options, token, callback) {
      * Sends GET request to Spotify for related artists of _each_ artist
      * @param {*} userData user's top artists in the last four weeks (short-term)
      * @param {*} token access token for API calls
-     * Returns map of user's top artist's index to that artist's related artists
+     * @returns map of user's top artist's index to that artist's related artists
      * -- Example: { '0' : [array of artist objects], '1' : [array of artist objects], ... } 
      */
     async function _getRelatedArtists(userData, token) {
@@ -112,17 +112,15 @@ function getAllArtistInfo(options, token, callback) {
     /**
      * Narrows down list of related artists based on popularity criteria
      * @param {*} data the related artist map from previous function
-     * Returns array of Spotify Artist objects
+     * @returns array of Spotify Artist objects
      */
     async function _getInitialArtistPool(data) {
         var initial_pool = [];
         for (artist in data) {
             for (const x of Array(20).keys()) { // Each artist has 20 related artists
                 var id = JSON.parse(JSON.stringify(data[artist].artists[x].id));
-                // Avoids duplicates (artist overlap) and filters through artists who are fairly popular
-                if (!initial_pool.includes(id) &&
-                    data[artist].artists[x].popularity < 70 &&
-                    data[artist].artists[x].popularity > 60) {
+                // Avoids duplicates (artist overlap)
+                if (!initial_pool.includes(id)) {
                     initial_pool.push(id);
                 }
             }
@@ -133,7 +131,7 @@ function getAllArtistInfo(options, token, callback) {
     /**
      * Chooses 50 artists and produces a query parameter from their artist ids
      * @param {*} arr array of artists
-     * Returns string to be passed as a query paramter to an API call
+     * @returns string to be passed as a query paramter to an API call
      */
     function _getRandomArtists(arr) {
         var query = "";
@@ -148,7 +146,7 @@ function getAllArtistInfo(options, token, callback) {
      * Chooses 50 artists from initial pool and sends GET request to Spotify for their artist info
      * @param {*} initial array of artists from initial pool
      * @param {*} token access token for API call
-     * Returns object in JSON format containing artists and their info
+     * @returns object in JSON format containing artists and their info
      */
     async function _getFinalArtistPool(initial, token) {
         // Gets multiple artists with this specific GET request (max 50 artists)
@@ -167,7 +165,7 @@ function getAllArtistInfo(options, token, callback) {
     /**
      * Iterates through artists and parses out necessary information
      * @param {*} data final array of 50 artists to be swiped on
-     * Returns array of artists mapped to their info that the program needs
+     * @returns array of artists mapped to their info that the program needs
      */
     async function _getEachArtistInfo(data) {
         var artists = [];
@@ -175,8 +173,8 @@ function getAllArtistInfo(options, token, callback) {
             var item = {};
             item["name"] = JSON.parse(JSON.stringify(data[x].name));
             item["image"] = JSON.parse(JSON.stringify(data[x].images[0].url));
-            item["follow"] = JSON.parse(JSON.stringify(data[x].followers.total));
-            item["genre"] = JSON.parse(JSON.stringify(data[x].genres));
+            item["follow"] = numberWithCommas(JSON.parse(JSON.stringify(data[x].followers.total)));
+            item["genre"] = genreHandler(JSON.parse(JSON.stringify(data[x].genres)));
             item["id"] = JSON.parse(JSON.stringify(data[x].id));
             artists.push(item);
         }
@@ -194,4 +192,30 @@ function getAllArtistInfo(options, token, callback) {
         var info = JSON.parse(JSON.stringify(await _getEachArtistInfo(final_pool.artists)));
         return callback(info);
     });
+}
+
+/**
+ * Styles integer with commas per decimal notations
+ * @param {*} x 
+ */
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/**
+ * Limits genre to be showed on card to 3, styles list with commas
+ * @param {*} arr 
+ * @returns string that contains artist genres
+ */
+function genreHandler(arr) {
+    arrStr = "";
+    if (arr.length === 0) {
+        return "no listed genres :(";
+    }
+    for (const i of Array(3).keys()) {
+        if (arr.length > i) {
+            arrStr = arrStr + arr[i].toString() + ", ";
+        }
+    }
+    return arrStr.slice(0, arrStr.length - 2);
 }

@@ -19,8 +19,8 @@ html body {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    border: none;
 }
-
 
 /* .page {
     overflow: hidden;
@@ -30,13 +30,11 @@ html body {
 } */
 
 .swipe {
-    /* padding-top: 15rem; */
     position: relative;
-    display: flex;
-    justify-content: center;
     align-items: center;
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
 }
 
 .artist-card {
@@ -44,9 +42,13 @@ html body {
     height: auto;
     z-index: 2;
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     transform-origin: 50% 100%;
+    display: block;
+    margin: 10rem auto;
 }
 
 /* .demo__card.reset */
@@ -85,34 +87,33 @@ html body {
     z-index: 1;
 }
 
-.artist-pic { 
+.artist-pic {
     width: 80vw;
     height: 50vh;
-    text-align: center;
     background-color: black;
     overflow: hidden;
 }
 
-.artist-info { 
-    width: 80vw;
-    height: 10rem;
-    background-color: white;
+.artist-pic>img {
+    display: block;
+    height: 50vh;
+    transform: scale(150%);
 }
 
-
-
-
+.artist-info {
+    width: 80vw;
+    height: 20vh;
+    background-color: white;
+    padding: 3rem;
+}
 
 .card-choice {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 70vh;
     opacity: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .card-choice:before {
@@ -124,14 +125,16 @@ html body {
 
 .card-choice:after {
     position: absolute;
+    margin-left: auto;
+    margin-right: auto;
     left: 0;
-    top: 0;
+    right: 0;
+    text-align: center;
     font-size: 15rem;
     text-align: center;
     color: white;
     /* hard coding center text */
-    margin-top: 5rem;
-    margin-left: 6.5rem;
+    margin-top: 20vh;
 }
 
 .card-choice.reject {
@@ -177,11 +180,12 @@ html body {
 .card-subtitle {
     color: grey;
     font-size: 2rem;
-    padding-bottom: 1rem;
+    padding-bottom: 2rem;
 }
 
 .card-text {
-    font-size: 2.5rem;
+    font-size: 2rem;
+    color: forestgreen;
 }
 
 .artist-name {
