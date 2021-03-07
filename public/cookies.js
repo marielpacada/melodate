@@ -111,6 +111,4 @@ var Cookies = {
 
 };
 
-
-
-export { Cookies };
+module.exports = { Cookies };

@@ -8,6 +8,7 @@ const app = express();
 /* Importing authorization IDs */
 const { my_client_id } = require('./secrets/auth.js');
 const { my_client_secret } = require('./secrets/auth.js');
+const { Cookies } = require('./public/cookies.js');
 const redirect_uri = "http://localhost:3000/home";
 
 /* Registering middleware and settings */
@@ -72,6 +73,17 @@ app.get('/home', async function (req, res) {
     });
 });
 
+app.get("/profile", function (req, res) {
+    console.log(req.cookies);
+    res.sendFile(__dirname + "/public/html/profile.html");
+});
+
+
+
+
+
+
+
 /* Listening on PORT 3000 */
 app.listen(3000);
 
@@ -120,7 +132,7 @@ function getAllArtistInfo(options, token, callback) {
             for (const x of Array(20).keys()) { // Each artist has 20 related artists
                 var id = JSON.parse(JSON.stringify(data[artist].artists[x].id));
                 // Avoids duplicates (artist overlap)
-                if (!initial_pool.includes(id)) {
+                if (initial_pool.indexOf(id) === -1) {
                     initial_pool.push(id);
                 }
             }
@@ -163,11 +175,35 @@ function getAllArtistInfo(options, token, callback) {
     }
 
     /**
+     * Gets relevant data from artist's first listed top track
+     * @param {*} id artist id
+     * @param {*} token access token for API call
+     * @returns object in JSON format containing relevant track info
+     */
+    async function _getTopTrack(id, token) {
+        var url = "https://api.spotify.com/v1/artists/" + id + "/top-tracks?market=US";
+        var track_options = {
+            method: "GET",
+            headers: { 'Authorization': 'Bearer ' + token },
+        }
+        const result = await fetch(url, track_options);
+        const data = JSON.parse(JSON.stringify(await result.json()));
+
+        var raw_track = data.tracks[0];
+        var track_attrs = {};
+        track_attrs["cover"] = raw_track.album.images[0].url; // album cover
+        track_attrs["title"] = raw_track.name.slice(0, 75);
+        track_attrs["preview"] = raw_track.preview_url; // mp3 url
+
+        return track_attrs;
+    }
+
+    /**
      * Iterates through artists and parses out necessary information
      * @param {*} data final array of 50 artists to be swiped on
      * @returns array of artists mapped to their info that the program needs
      */
-    async function _getEachArtistInfo(data) {
+    async function _getEachArtistInfo(data, token) {
         var artists = [];
         for (const x of Array(50).keys()) {
             var item = {};
@@ -176,6 +212,7 @@ function getAllArtistInfo(options, token, callback) {
             item["follow"] = numberWithCommas(JSON.parse(JSON.stringify(data[x].followers.total)));
             item["genre"] = genreHandler(JSON.parse(JSON.stringify(data[x].genres)));
             item["id"] = JSON.parse(JSON.stringify(data[x].id));
+            item["track"] = await _getTopTrack(item["id"], token);
             artists.push(item);
         }
         return artists;
@@ -189,7 +226,7 @@ function getAllArtistInfo(options, token, callback) {
         var related_artists = await _getRelatedArtists(user_artists, token);
         var initial_pool = await _getInitialArtistPool(related_artists);
         var final_pool = await _getFinalArtistPool(initial_pool, token);
-        var info = JSON.parse(JSON.stringify(await _getEachArtistInfo(final_pool.artists)));
+        var info = JSON.parse(JSON.stringify(await _getEachArtistInfo(final_pool.artists, token)));
         return callback(info);
     });
 }
@@ -203,7 +240,7 @@ function numberWithCommas(x) {
 }
 
 /**
- * Limits genre to be showed on card to 3, styles list with commas
+ * Limits genres to be showed on card to 3, styles list with commas
  * @param {*} arr array of artist genres
  * @returns string that contains artist genres
  */
@@ -213,7 +250,8 @@ function genreHandler(arr) {
         return "no listed genres :(";
     }
     for (const i of Array(3).keys()) {
-        if (arr.length > i) {
+        // Ensures genres will only take up one paragraph line
+        if (arr.length > i && (arrStr.length + arr[i].toString().length) < 44) {
             arrStr = arrStr + arr[i].toString() + ", ";
         }
     }

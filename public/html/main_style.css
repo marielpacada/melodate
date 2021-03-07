@@ -89,7 +89,7 @@ html body {
 
 .artist-pic {
     width: 80vw;
-    height: 50vh;
+    height: 42vh;
     background-color: black;
     overflow: hidden;
 }
@@ -102,7 +102,7 @@ html body {
 
 .artist-info {
     width: 80vw;
-    height: 20vh;
+    height: 18vh;
     background-color: white;
     padding: 3rem;
 }
@@ -112,7 +112,7 @@ html body {
     left: 0;
     top: 0;
     width: 100%;
-    height: 70vh;
+    height: 60vh;
     opacity: 0;
 }
 
@@ -159,17 +159,8 @@ html body {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 60vh;
     cursor: grab;
-}
-
-.btn-div {
-    text-align: center;
-    font-size: 10rem;
-}
-
-.btn-hidden {
-    display: none;
 }
 
 .card-title {
@@ -204,3 +195,91 @@ html body {
     color: grey;
     height: auto;
 }
+
+#top-track {
+    font-size: 2rem;
+    background-color: #8FCB9B;
+    padding: 2rem;
+    height: 19vh;
+    width: 100%;
+    padding: 3rem;
+}
+
+.track-info {
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.track-image {
+    width: 45%;
+    float: left;
+    height: auto;
+    margin-right: 2rem;
+}
+
+.track-player {
+    width: 45%;
+    float: left;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.track-player>video { 
+    height: 100px;
+    width: 300px;
+}
+
+.track-image>img {
+    height: 300px;
+    width: 300px;
+}
+
+@media (min-width: 340px) { 
+    #top-track { 
+        font-size: 2rem;
+        background-color: #8FCB9B;
+        padding: 2rem;
+        height: 24vh;
+        width: 100%;
+        padding: 3rem;
+    }
+}
+
+.instructions { 
+    width: 100%;
+    height: 60vh;
+    background-color: #EFFFF1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid;
+    font-size: 3rem;
+    padding: 6rem;
+}
+
+.instructions>p { 
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.playlist-button { 
+    font-size: 3rem;
+    width: 60vw;
+    border-radius: 70px;
+    padding: 1.5rem 0 1.5rem;
+    border: solid 4px;
+    background-color: #EFFFF1;
+}
+
+.button-card { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* #F8F0F0 */

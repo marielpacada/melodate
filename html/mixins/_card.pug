@@ -1,6 +1,5 @@
 mixin card(artist)  
-	div.artist-card
-
+	div.artist-card(data-toggle="collapse" data-target="#top-track" id=artist.id)
 		div.artist-pic
 			img(src=artist.image)
 		div.artist-info
@@ -13,3 +12,12 @@ mixin card(artist)
 		div.card-choice.reject
 		div.card-choice.like
 		div.card-drag
+
+		div.collapse#top-track
+			div.track-info
+				div.track-image
+					img(src=artist.track.cover)
+				div.track-player
+					p #{artist.track.title}
+					video(controls name="media")
+						source(src=artist.track.preview type="audio/mpeg")
