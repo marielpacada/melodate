@@ -1,0 +1,6 @@
+mixin item(artist)
+	- var link = "https://open.spotify.com/artist/" + artist.id
+	form(action=link target="_blank")
+		button.item
+			img(src=artist.pic)
+			p #{artist.name}

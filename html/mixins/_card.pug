@@ -1,10 +1,10 @@
-mixin card(artist)  
+mixin card(artist)
 	div.artist-card(data-toggle="collapse" data-target="#top-track" id=artist.id)
 		div.artist-pic
 			img(src=artist.image)
 		div.artist-info
 			div.artist-name
-				h3.card-title #{artist.name} 
+				h3.card-title #{artist.name}
 				button.bio-btn
 					i.fas.fa-info-circle.fa-2x
 			p.card-subtitle #{artist.follow} followers

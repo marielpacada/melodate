@@ -1,6 +1,7 @@
 /* Loading modules */
 global.fetch = require("node-fetch");
 const querystring = require('querystring');
+const cookieParser = require("cookie-parser");
 const express = require("express");
 const request = require('request');
 const app = express();
@@ -13,6 +14,7 @@ const redirect_uri = "http://localhost:3000/home";
 
 /* Registering middleware and settings */
 app.use(express.static(__dirname + "/public"));
+app.use(cookieParser());
 app.set("view engine", "pug");
 app.set("query parser", "extended");
 app.set("views", __dirname + "/html");
@@ -73,9 +75,15 @@ app.get('/home', async function (req, res) {
     });
 });
 
+
+// TODO:
+
 app.get("/profile", function (req, res) {
-    console.log(req.cookies);
-    res.sendFile(__dirname + "/public/html/profile.html");
+    var names = req.cookies.names;
+    var pics = req.cookies.pics;
+    var ids = req.cookies.ids;
+    var artists = cookieHandler(names, pics, ids);
+    res.render("profile", { likes: artists });
 });
 
 
@@ -256,4 +264,19 @@ function genreHandler(arr) {
         }
     }
     return arrStr.slice(0, arrStr.length - 2);
+}
+
+function cookieHandler(names, pics, ids) {
+    var nameArr = names.split(",");
+    var picArr = pics.split(",");
+    var idArr = ids.split(",");
+    var artists = [];
+    for (const i of Array(nameArr.length).keys()) {
+        var inner = {};
+        inner["pic"] = picArr[i].toString();
+        inner["id"] = idArr[i].toString();
+        inner["name"] = nameArr[i].toString();
+        artists.push(inner);
+    }
+    return artists;
 }

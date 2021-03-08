@@ -6,26 +6,22 @@ head
 	link(rel='stylesheet' type="text/css" href="html/main_style.css")
 	link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
 	script(type="text/javascript" src="https://kit.fontawesome.com/d9b87cbfce.js")
-
-
 body
 	div.swipe
 		div.artist-card.button-card
 			form(action="/profile")
 				button.playlist-button(type="submit") lesgooo →
-		div.artist-card.last-card
+		div.artist-card.last-card#not-artist
 			div.instructions
 				p woo! ready to see your matches? 💟
 			div.card-drag
 		each artist in artists
 			+card(artist)
-		div.artist-card.first-card
+		div.artist-card.first-card#not-artist
 			div.instructions
 				p swipe right if the artist catches your eye 😉
 				p swipe left if they don't ❌
 				p tap the card to see their top track 🎶
-				p ------------------
-				p swipe to start, cutie!
 			div.card-drag
 
 	

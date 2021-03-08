@@ -8,6 +8,7 @@ html body {
     font-family: "futura", Verdana, Geneva, Tahoma, sans-serif;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .header {
@@ -33,6 +34,18 @@ html body {
 
 .green-button {
     background-color: #EFFFF1;
+}
+
+.loading {
+    background-color: #FFF6DE;
+    padding: 15rem 5rem 20% 5rem;
+    position: absolute;
+    top: 62rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: -100;
 }
 
 #logo {
