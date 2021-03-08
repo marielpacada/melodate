@@ -9,7 +9,6 @@ const app = express();
 /* Importing authorization IDs */
 const { my_client_id } = require('./secrets/auth.js');
 const { my_client_secret } = require('./secrets/auth.js');
-const { Cookies } = require('./public/cookies.js');
 const redirect_uri = "http://localhost:3000/home";
 
 /* Registering middleware and settings */
@@ -57,6 +56,7 @@ app.get('/home', async function (req, res) {
     request.post(auth_options, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             const access_token = body.access_token;
+            res.cookie("coin", access_token);
             var top_artists_options = {
                 url: 'https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term',
                 headers: { 'Authorization': 'Bearer ' + access_token },
@@ -75,17 +75,35 @@ app.get('/home', async function (req, res) {
     });
 });
 
-
-// TODO:
-
 app.get("/profile", function (req, res) {
     var names = req.cookies.names;
     var pics = req.cookies.pics;
     var ids = req.cookies.ids;
-    var artists = cookieHandler(names, pics, ids);
+    var covers = req.cookies.covers;
+    var titles = req.cookies.titles;
+    var tracks = req.cookies.tracks; // track IDs
+    try {
+        var artists = cookieHandler(names, pics, ids, covers, titles, tracks);
+    } catch {
+        res.send("error :(")
+    }
     res.render("profile", { likes: artists });
 });
 
+
+
+
+// TODO:
+app.get("/follow", async function (req, res) {
+    var ids = encodeURIComponent(req.cookies.ids);
+    var url = "https://api.spotify.com/v1/me/following?type=artist&ids=" + ids;
+    var ops = {
+        method: "PUT",
+        headers: { 'Authorization': 'Bearer ' + req.cookies.coin },
+    }
+    await fetch(url, ops);
+    res.redirect("/profile");
+});
 
 
 
@@ -202,6 +220,7 @@ function getAllArtistInfo(options, token, callback) {
         track_attrs["cover"] = raw_track.album.images[0].url; // album cover
         track_attrs["title"] = raw_track.name.slice(0, 75);
         track_attrs["preview"] = raw_track.preview_url; // mp3 url
+        track_attrs["trackID"] = raw_track.id;
 
         return track_attrs;
     }
@@ -266,16 +285,22 @@ function genreHandler(arr) {
     return arrStr.slice(0, arrStr.length - 2);
 }
 
-function cookieHandler(names, pics, ids) {
+function cookieHandler(names, pics, ids, covers, titles, tracks) {
     var nameArr = names.split(",");
     var picArr = pics.split(",");
     var idArr = ids.split(",");
+    var coverArr = covers.split(",");
+    var titleArr = titles.split(",");
+    var trackArr = tracks.split(",");
     var artists = [];
     for (const i of Array(nameArr.length).keys()) {
         var inner = {};
         inner["pic"] = picArr[i].toString();
         inner["id"] = idArr[i].toString();
         inner["name"] = nameArr[i].toString();
+        inner["cover"] = coverArr[i].toString();
+        inner["title"] = titleArr[i].toString();
+        inner["track"] = trackArr[i].toString();
         artists.push(inner);
     }
     return artists;

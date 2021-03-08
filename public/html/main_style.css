@@ -27,6 +27,7 @@ html body {
     align-items: center;
     width: 100vw;
     height: 100vh;
+    border: 1rem solid #EBADB8;
     overflow: hidden;
 }
 
@@ -41,7 +42,7 @@ html body {
     bottom: 0;
     transform-origin: 50% 100%;
     display: block;
-    margin: 10rem auto;
+    margin: 8rem auto;
 }
 
 .artist-card.reset {
@@ -118,9 +119,7 @@ html body {
     right: 0;
     text-align: center;
     font-size: 15rem;
-    text-align: center;
     color: white;
-    /* hard coding center text */
     margin-top: 20vh;
 }
 
@@ -183,7 +182,7 @@ html body {
     height: auto;
 }
 
-.first-card { 
+.first-card {
     transform: translateX(36px) rotate(3.5deg);
 }
 
@@ -274,12 +273,13 @@ html body {
 }
 
 .header {
-    font-size: 5rem;
+    font-size: 3.5rem;
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     padding: 3rem;
     height: 12vh;
+    width: 100vw;
     background-color: #EBADB8;
     color: white;
 }
@@ -288,13 +288,6 @@ html body {
     display: inline-block;
     height: 120px;
     width: 120px;
-}
-
-.header>p {
-    display: inline-block;
-    width: calc(100vw - 6rem - 120px);
-    margin: 0;
-    text-decoration: underline;
 }
 
 .list-body {
@@ -335,6 +328,10 @@ html body {
     margin-right: 2rem;
 }
 
+.item>p { 
+    text-align: left;
+}
+
 .tabs {
     height: 10vh;
     width: 100vw;
@@ -345,4 +342,45 @@ html body {
     align-items: center;
     position: fixed;
     top: 90vh;
+}
+
+.nav-link {
+    border: none !important;
+    background-color: #EBADB8;
+    padding: 0;
+    margin-right: 2rem;
+    color: #495057;
+}
+
+.nav-item {
+    display: inline-block;
+    width: auto;
+}
+
+.nav-link.active {
+    border: none !important;
+    background-color: #EBADB8 !important;
+    color: white !important;
+    text-decoration: underline !important;
+}
+
+#match-tabs {
+    margin: 0 !important;
+    border: none !important;
+    width: calc(100vw - 6rem - 150px);
+    display: inline-block;
+    justify-content: space-between;
+}
+
+.block-button {
+    margin-top: 2rem;
+    font-size: 3rem;
+    border-radius: 70px;
+    padding: 1.5rem 0 1.5rem;
+    width: 100%;
+    border: solid 4px;
+}
+
+.green-button {
+    background-color: #EFFFF1;
 }

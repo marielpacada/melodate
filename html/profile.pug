@@ -1,26 +1,39 @@
-include mixins/_item
+include mixins/_artist_item
+include mixins/_track_item
 doctype html
 html(lang="en")
 head
-    title Spinder
-    link(rel='stylesheet' type="text/css" href="html/main_style.css")
-    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
-    script(type="text/javascript" src="https://kit.fontawesome.com/d9b87cbfce.js")
+	title Spinder
+	link(rel='stylesheet' type="text/css" href="html/main_style.css")
+	link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
+	script(type="text/javascript" src="https://kit.fontawesome.com/d9b87cbfce.js")
 
 body.list-body
-    div.header
-        p artists
-        img(src="images/logo.svg")
-    div.list
-        each artist in likes
-            +item(artist)
-    div.tabs
+	div.header
+		ul.nav.nav-tabs#match-tabs(role="tablist")
+			li.nav-item
+				a(class="nav-link active" id="artist-tab" data-toggle="tab" href="#artists" role="tab" aria-controls="artists" aria-selected="true") artists
+			li.nav-item
+				a(class="nav-link" id="track-tab" data-toggle="tab" href="#tracks" role="tab" aria-controls="tracks" aria-selected="false") tracks
+		img(src="images/logo.svg")
+	div.tab-content#matches
+		div.list.tab-pane.fade.show.active#artists(role="tabpanel" aria-labelledby="artist-tab")
+			each artist in likes
+				+artist_item(artist)
+			form(action="/follow")
+				button.block-button.green-button#follow-button(type="submit") follow artists
+		div.list.tab-pane.fade#tracks(role="tabpanel" aria-labelledby="track-tab")
+			each artist in likes
+				+track_item(artist)
+			form(action="/playlist")
+				button.block-button.green-button#playlist-button(type="submit") create playlist
 
 
 
-
+	div.tabs
 
 footer
-    script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous")
-    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+	script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous")
+	script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+

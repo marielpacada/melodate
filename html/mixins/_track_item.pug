@@ -1,0 +1,6 @@
+mixin track_item(artist)
+	- var link = "https://open.spotify.com/track/" + artist.track
+	form(action=link target="_blank")
+		button.item
+			img(src=artist.cover)
+			p #{artist.title}

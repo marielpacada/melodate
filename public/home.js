@@ -37,6 +37,9 @@ $(function () {
     var like_names = [];
     var like_pics = [];
     var like_ids = [];
+    var like_covers = [];
+    var like_titles = [];
+    var like_tracks = [];
     var animating = false;
     var cardsCounter = 0;
     var numOfCards = 6;
@@ -64,6 +67,9 @@ $(function () {
                 like_names.push($card.find(".artist-info").find(".artist-name").find(".card-title").text());
                 like_pics.push($card.find(".artist-pic").find("img").attr("src"));
                 like_ids.push($card.attr("id"));
+                like_covers.push($card.find("#top-track").find(".track-info").find(".track-image").find("img").attr("src"));
+                like_titles.push($card.find("#top-track").find(".track-info").find(".track-player").find("p").text());
+                like_tracks.push($card.find("#top-track").find(".track-info").find(".track-player").attr("id"));
             }
         } else if (pullDeltaX <= -decisionVal) {
             $card.addClass("to-left");
@@ -118,6 +124,9 @@ $(function () {
                 Cookies.set("names", like_names);
                 Cookies.set("pics", like_pics);
                 Cookies.set("ids", like_ids);
+                Cookies.set("covers", like_covers);
+                Cookies.set("titles", like_titles);
+                Cookies.set("tracks", like_tracks);
             }
         });
     });
