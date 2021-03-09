@@ -2,6 +2,7 @@
 global.fetch = require("node-fetch");
 const querystring = require('querystring');
 const cookieParser = require("cookie-parser");
+const FormData = require("form-data");
 const express = require("express");
 const request = require('request');
 const app = express();
@@ -9,6 +10,7 @@ const app = express();
 /* Importing authorization IDs */
 const { my_client_id } = require('./secrets/auth.js');
 const { my_client_secret } = require('./secrets/auth.js');
+const { fileURLToPath } = require("url");
 const redirect_uri = "http://localhost:3000/home";
 
 /* Registering middleware and settings */
@@ -38,6 +40,9 @@ app.get('/login', function (req, res) {
  * Handles all API requests for information on user profile (name, image, follower count, genre list, and id).
  */
 app.get('/home', async function (req, res) {
+    res.clearCookie("follow_visited");
+    res.clearCookie("playlist_visited");
+
     // Gathering token via POST request to Spotify
     const auth_code = await req.query.code || null;
     var auth_options = {
@@ -67,7 +72,7 @@ app.get('/home', async function (req, res) {
             getAllArtistInfo(top_artists_options, access_token, async function (artistRes) {
                 var artist_info = await JSON.parse(JSON.stringify(artistRes));
                 // Sends artist info as a header (to be iterated in pug file)
-                res.render("landing", { artists: artist_info });
+                res.render("home", { artists: artist_info });
             });
         } else { // Redirects on error
             res.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
@@ -75,25 +80,25 @@ app.get('/home', async function (req, res) {
     });
 });
 
-app.get("/profile", function (req, res) {
+app.get("/match", function (req, res) {
+
     var names = req.cookies.names;
     var pics = req.cookies.pics;
     var ids = req.cookies.ids;
     var covers = req.cookies.covers;
     var titles = req.cookies.titles;
     var tracks = req.cookies.tracks; // track IDs
+    // if else block here
+    // if empty, then send no matches page (that has a link back to /login)
+    // if not empty, then proceed as usual
     try {
         var artists = cookieHandler(names, pics, ids, covers, titles, tracks);
     } catch {
-        res.send("error :(")
+        res.send("error :(") // send a better file lol
     }
-    res.render("profile", { likes: artists });
+    res.render("match", { likes: artists });
 });
 
-
-
-
-// TODO:
 app.get("/follow", async function (req, res) {
     var ids = encodeURIComponent(req.cookies.ids);
     var url = "https://api.spotify.com/v1/me/following?type=artist&ids=" + ids;
@@ -101,11 +106,60 @@ app.get("/follow", async function (req, res) {
         method: "PUT",
         headers: { 'Authorization': 'Bearer ' + req.cookies.coin },
     }
+    res.cookie("follow_visited", "true");
     await fetch(url, ops);
-    res.redirect("/profile");
+    res.redirect("/match#artists");
 });
 
+app.get("/playlist", async function (req, res) {
+    // get request for user profile (getting id)
+    var get_result = await fetch("https://api.spotify.com/v1/me", {
+        method: "GET",
+        headers: { 'Authorization': 'Bearer ' + req.cookies.coin }
+    });
+    var get_data = await get_result.json();
+    var user_id = get_data.id;
 
+    // post request playlist and getting the playlist id
+    var post_url = "https://api.spotify.com/v1/users/" + user_id + "/playlists";
+    var post_result = await fetch(post_url, {
+        method: "POST",
+        headers: {
+            'Authorization': 'Bearer ' + req.cookies.coin,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: "playlist by spinder ♫",
+            description: "find your love at first note ♥"
+        })
+    });
+
+    var post_data = await post_result.json();
+    var playlist_id = post_data.id;
+    res.cookie("playlist_visited", "true");
+
+    // add a playlist image (our logo!)
+    // when you make a prettier logo lol
+
+    var add_url = "https://api.spotify.com/v1/playlists/" + playlist_id + "/tracks"
+    await fetch(add_url, {
+        method: "POST",
+        headers: {
+            'Authorization': 'Bearer ' + req.cookies.coin,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            uris: getTrackURI(req)
+        })
+    });
+    res.redirect("/match#tracks");
+});
+
+app.get("/swipe", function (req, res) {
+    res.render("swipe");
+});
 
 
 
@@ -304,4 +358,15 @@ function cookieHandler(names, pics, ids, covers, titles, tracks) {
         artists.push(inner);
     }
     return artists;
+}
+
+
+function getTrackURI(request) {
+    var trackArr = request.cookies.tracks.split(",");
+    var uriArr = [];
+    for (var track of trackArr) {
+        var uri = "spotify:track:" + track;
+        uriArr.push(uri);
+    }
+    return uriArr;
 }

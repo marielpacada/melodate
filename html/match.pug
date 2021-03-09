@@ -1,0 +1,74 @@
+include mixins/_artist_item
+include mixins/_track_item
+doctype html
+html(lang="en")
+head
+	title Spinder
+	link(rel='stylesheet' type="text/css" href="html/main_style.css")
+	link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
+	script(type="text/javascript" src="https://kit.fontawesome.com/d9b87cbfce.js")
+	script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous")
+	script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+	script(type="text/javascript").
+		$(function() { 
+			var follow_cookie = document.cookie.split("follow_visited="); // if length is 1, then the cookie does not exist
+			var playlist_cookie = document.cookie.split("playlist_visited=");
+			if (follow_cookie.length > 1 && follow_cookie[1].slice(0,4) === "true") { 
+				$("#follow-button").removeClass("green-button").removeClass("block-button").addClass("done-button");
+				$("#follow-button").html("done!");
+			}
+
+			if (playlist_cookie.length > 1 && playlist_cookie[1].slice(0,4) === "true") {
+				$("#playlist-button").removeClass("green-button").removeClass("block-button").addClass("done-button");
+				$("#playlist-button").html("done!");
+			}
+
+			var hash = window.location.hash;
+			hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+			$('.nav-tabs a').click(function (e) {
+				$(this).tab('show');
+				var scrollmem = $('body').scrollTop();
+				window.location.hash = this.hash;
+				$('html,body').scrollTop(scrollmem);
+			});
+
+			$(".tab-button").click(function() { 
+				window.location = $(this).find("a").attr("href"); 
+			});
+		});
+body.list-body
+	div.header
+		ul.nav.nav-tabs#match-tabs(role="tablist")
+			li.nav-item
+				a(class="nav-link active" id="artist-tab" data-toggle="tab" href="#artists" role="tab" aria-controls="artists" aria-selected="true") artists
+			li.nav-item
+				a(class="nav-link" id="track-tab" data-toggle="tab" href="#tracks" role="tab" aria-controls="tracks" aria-selected="false") tracks
+		img(src="images/logo.svg")
+	div.tab-content#matches
+		div.list.tab-pane.fade.show.active#artists(role="tabpanel" aria-labelledby="artist-tab")
+			each artist in likes
+				+artist_item(artist)
+			form.put-form(action="/follow")
+				button.block-button.green-button#follow-button(type="submit") follow artists
+		div.list.tab-pane.fade#tracks(role="tabpanel" aria-labelledby="track-tab")
+			each artist in likes
+				+track_item(artist)
+			form.put-form(action="/playlist")
+				button.block-button.green-button#playlist-button(type="submit") create playlist
+	div.tabs
+		div.tab-button.likes
+			p.icon ♥
+			p.tag likes
+		div.tab-button.account(style="color: gray")
+			p.icon ✿
+			p.tag account
+			a(href="/account")
+		div.tab-button.discover(style="color: gray")
+			p.icon ♬
+			p.tag discover
+			a(href="/swipe")
+
+
+
