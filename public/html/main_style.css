@@ -284,8 +284,9 @@ html body {
     color: white;
 }
 
-.header>p { 
-    width: 200px;
+.header>p {
+    width: calc(100vw - 6rem - 120px);
+    display: inline-block;
 }
 
 .header>img {
@@ -324,6 +325,18 @@ html body {
     height: auto;
     width: 80vw;
     margin-bottom: 3rem;
+}
+
+.list>p { 
+    font-size: 4rem;
+    text-align: center;
+    margin-top: 10rem;
+    
+}
+
+#note { 
+    font-size: 2rem;
+    padding: 0 2rem;
 }
 
 .item>img {
