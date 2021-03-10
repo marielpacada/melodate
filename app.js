@@ -30,9 +30,9 @@ app.get("/", function (req, res) {
 
 app.get('/login', function (req, res) {
     var scopes = 'user-top-read playlist-modify-public user-follow-modify';
-    res.redirect('https://accounts.spotify.com/authorize' + '?response_type=code' +
+    res.redirect('https://accounts.spotify.com/authorize' + '?response_type=code' + "&show_dialog=true" +
         '&client_id=' + my_client_id + (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
-        '&redirect_uri=' + encodeURIComponent(redirect_uri)) + "&state=state";
+        '&redirect_uri=' + encodeURIComponent(redirect_uri));
 });
 
 /**
@@ -161,6 +161,18 @@ app.get("/swipe", function (req, res) {
     res.render("swipe");
 });
 
+
+app.get("/account", async function (req, res) {
+    var result = await fetch("https://api.spotify.com/v1/me", {
+        method: "GET",
+        headers: { 'Authorization': 'Bearer ' + req.cookies.coin }
+    })
+    var data = await result.json();
+    var user_name = (data.display_name.length === 0) ? "cutie" : data.display_name.toLowerCase();
+    var user_image = (data.images.length === 0) ? "images/bunny.png" : data.images[0].url;
+
+    res.render("account", { name: user_name, image: user_image });
+});
 
 
 

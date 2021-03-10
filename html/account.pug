@@ -1,0 +1,53 @@
+doctype html
+html(lang="en")
+head
+	title Spinder
+	link(rel='stylesheet' type="text/css" href="html/main_style.css")
+	link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
+	script(type="text/javascript" src="https://kit.fontawesome.com/d9b87cbfce.js")
+	script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous")
+	script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+	script(type="text/javascript").
+		$(function() { 
+			var hash = window.location.hash;
+			hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+			$('.nav-tabs a').click(function (e) {
+				$(this).tab('show');
+				var scrollmem = $('body').scrollTop();
+				window.location.hash = this.hash;
+				$('html,body').scrollTop(scrollmem);
+			});
+
+			$(".tab-button").click(function() { 
+				window.location = $(this).find("a").attr("href"); 
+			});
+		});
+body
+	div.header
+		p spinder
+		img(src="images/logo.svg")
+	div.greeting
+		p hey, #{name}!
+		img.user-pic(src=image)
+	div.doc-buttons
+		form(action="/how-spinder-works")
+			button.doc how spinder works
+		form(action="/privacy")
+			button.doc our privacy policy
+	div.logout
+		form(action="/")
+			button.block-button.red-button(type="submit") logout
+	div.tabs
+		div.tab-button.likes(style="color: gray")
+			p.icon ♥
+			p.tag likes
+			a(href="/match")
+		div.tab-button.account(style="pointer-events: none;")
+			p.icon ✿
+			p.tag account
+		div.tab-button.discover(style="color: gray")
+			p.icon ♬
+			p.tag discover
+			a(href="/swipe")
