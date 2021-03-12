@@ -1,8 +1,8 @@
 mixin card(artist)
-	div.artist-card(data-toggle="collapse" data-target="#top-track" id=artist.id)
-		div.artist-pic
+	div.artist-card(id=artist.id)
+		div.artist-pic(data-toggle="collapse" data-target="#top-track")
 			img(src=artist.image)
-		div.artist-info
+		div.artist-info(data-toggle="collapse" data-target="#top-track")
 			div.artist-name
 				h3.card-title #{artist.name}
 				button.bio-btn
@@ -21,3 +21,5 @@ mixin card(artist)
 					p #{artist.track.title}
 					audio(controls)
 						source(src=artist.track.preview type="audio/mpeg")
+
+
