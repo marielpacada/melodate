@@ -43,10 +43,6 @@ $(function () {
         }
 
         if (Math.abs(pullDeltaX) >= decisionVal) {
-            if ($card.attr("id") != "not-artist") {
-                $card.find("#top-track").find(".track-info").find(".track-player").find("audio").pause();
-            }
-
             $card.addClass("inactive");
 
             setTimeout(function () {
@@ -56,9 +52,11 @@ $(function () {
                     cardsCounter = 0;
                     $(".artist-card").removeClass("below");
                 }
-
-
             }, 300);
+            
+            if ($card.attr("id") != "not-artist") {
+                $card.find("#top-track").find(".track-info").find(".track-player").find("audio").pause();
+            }
         }
 
         if (Math.abs(pullDeltaX) < decisionVal) {
