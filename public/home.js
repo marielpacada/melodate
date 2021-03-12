@@ -53,9 +53,9 @@ $(function () {
                     $(".artist-card").removeClass("below");
                 }
             }, 300);
-            
+
             if ($card.attr("id") != "not-artist") {
-                $card.find("#top-track").find(".track-info").find(".track-player").find("audio").pause();
+                $card.find("#top-track").find(".track-info").find(".track-player").find("audio").trigger("pause");
             }
         }
 
