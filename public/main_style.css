@@ -217,8 +217,8 @@ html body {
     justify-content: space-evenly;
 }
 
-.track-player>video {
-    height: 100px;
+.track-player>audio {
+    height: 75px;
     width: 300px;
 }
 
