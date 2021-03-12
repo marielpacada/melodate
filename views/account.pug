@@ -2,7 +2,7 @@ doctype html
 html(lang="en")
 head
 	title Spinder
-	link(rel='stylesheet' type="text/css" href="html/main_style.css")
+	link(rel='stylesheet' type="text/css" href="views/main_style.css")
 	link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
 	script(type="text/javascript" src="https://kit.fontawesome.com/d9b87cbfce.js")
 	script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
@@ -32,10 +32,10 @@ body
 		p hey, #{name}!
 		img.user-pic(src=image)
 	div.doc-buttons
-		form(action="/how-spinder-works")
-			button.doc how spinder works
 		form(action="/privacy")
 			button.doc our privacy policy
+		form(action="https://accounts.spotify.com" target="_blank")
+			button.doc manage your spotify account
 	div.logout
 		form(action="/")
 			button.block-button.red-button(type="submit") logout

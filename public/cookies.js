@@ -35,13 +35,13 @@ var Cookies = {
 		// initialise the cookie data
 		var data = [encodeURIComponent(name) + '=' + encodeURIComponent(value)];
 
-		// check whether there are nay options
+		// check whether there are any options
 		if (options) {
 
 			// extend the data with the expiry date if necessary
 			if ('expiry' in options) {
 				if (typeof options.expiry == 'number') {
-					options.expiry = new Date(options.expiry * 1000 + +new Date);
+					options.expiry = 3600; // cookie expires in 1 hour
 				}
 				data.push('expires=' + options.expiry.toGMTString());
 			}

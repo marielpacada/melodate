@@ -190,7 +190,7 @@ html body {
     font-size: 2rem;
     background-color: #8FCB9B;
     padding: 2rem;
-    height: 19vh;
+    height: auto;
     width: 100%;
     padding: 3rem;
 }
@@ -226,17 +226,6 @@ html body {
 .track-image>img {
     height: 300px;
     width: 300px;
-}
-
-@media (min-width: 340px) {
-    #top-track {
-        font-size: 2rem;
-        background-color: #8FCB9B;
-        padding: 2rem;
-        height: 24vh;
-        width: 100%;
-        padding: 3rem;
-    }
 }
 
 .instructions {
@@ -415,6 +404,7 @@ html body {
     padding: 1.5rem 0 1.5rem;
     width: 100%;
     border: solid 4px;
+    font-family: "futura", Verdana, Geneva, Tahoma, sans-serif;
     content: "follow artists";
 }
 
@@ -482,4 +472,49 @@ html body {
 .logout { 
     width: 80vw;
     margin: 0 auto;
+}
+
+.policy { 
+    width: 85vw;
+    margin: 10rem 7.5vw;
+    font-size: 2rem;
+    padding-bottom: 25rem;
+}
+
+.policy>h2 { 
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+}
+
+.policy>h3 { 
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.policy>h4 { 
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.policy>p { 
+    margin-bottom: 1.5rem;
+}
+
+.policy>ol { 
+    list-style-position: inside;
+}
+
+@media (min-height: 700px) { 
+    .header {
+        font-size: 5rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4rem 3rem 3rem 3rem;
+        height: 12vh;
+        width: 100vw;
+        background-color: #EBADB8;
+        color: white;
+    }
 }

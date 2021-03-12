@@ -18,7 +18,6 @@ app.use(express.static(__dirname + "/public"));
 app.use(cookieParser());
 app.set("view engine", "pug");
 app.set("query parser", "extended");
-app.set("views", __dirname + "/html");
 
 /**
  * Login page. 
@@ -94,7 +93,7 @@ app.get("/match", function (req, res) {
     try {
         var artists = cookieHandler(names, pics, ids, covers, titles, tracks);
     } catch {
-        res.send("error :(") // send a better file lol
+        res.render("error");
     }
     res.render("match", { likes: artists });
 });
@@ -174,6 +173,9 @@ app.get("/account", async function (req, res) {
     res.render("account", { name: user_name, image: user_image });
 });
 
+app.get("/privacy", function (req, res) { 
+    res.render("privacy");
+})
 
 
 /* Listening on PORT 3000 */

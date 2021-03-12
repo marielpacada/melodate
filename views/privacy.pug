@@ -1,0 +1,127 @@
+doctype html
+html(lang="en")
+head
+	title Spinder
+	link(rel='stylesheet' type="text/css" href="views/main_style.css")
+	link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
+	script(type="text/javascript" src="https://kit.fontawesome.com/d9b87cbfce.js")
+	script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous")
+	script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+	script(type="text/javascript").
+		$(function() { 
+			var hash = window.location.hash;
+			hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+			$('.nav-tabs a').click(function (e) {
+				$(this).tab('show');
+				var scrollmem = $('body').scrollTop();
+				window.location.hash = this.hash;
+				$('html,body').scrollTop(scrollmem);
+			});
+
+			$(".tab-button").click(function() { 
+				window.location = $(this).find("a").attr("href"); 
+			});
+		});
+body.list-body
+	div.header
+		p spinder
+		img(src="images/logo.svg")
+	div.policy
+		h2 spinder privacy policy
+		p last updated march 2021
+		br
+		br
+		p 
+			| spinder (“we” hereafter) respects the privacy of our users (“you” hereafter). this privacy policy 
+			| explains how we collect and use your information when you visit our web application (the “application”). 
+			| please read this privacy policy carefully. if you do not agree with the terms of this privacy policy, 
+			| please do not access the application. 
+		p
+			| we reserve the right to make changes to this privacy policy at any time for any reason. we will alert you 
+			| about any changes by updating the “last updated” date of this document. you are encouraged to periodically 
+			| review this privacy policy to stay informed of updates. you will be deemed to have been made aware of, will 
+			| be subject to, and will be deemed to have accepted the changes in any revised privacy policy by your continued 
+			| use of the application after the date such revised privacy policy is posted.
+		p
+			| this privacy policy does not apply to spotify technologies s.a. or spotify ab. we are not responsible for any 
+			| of the data collected by spotify.
+		br
+		h3 collection of your information
+		p
+			| we may collect information about you in a variety of ways. the information we may collect via the application 
+			| depends on the features you use, and includes: 
+		h4 personal data
+		p
+			| personally identifiable information — namely, your spotify display name and spotify profile picture — are 
+			| accessed and stored as cookies (see “cookies” section below for more information) upon use of the application. 
+			| furthermore, the application automatically collects information regarding your listening activity — namely, 
+			| the list of artists you have listened to the most within the past four weeks — on the spotify service. note 
+			| that these are pieces of data provided to spotify by yourself as a spotify user. 
+		h4 derivative data
+		p
+			| the application stores information about your native actions to the application, such as navigating the 
+			| pages of the application and using the services provided by the application.
+		br
+		h3 use of your information
+		p
+			| having accurate information about you permits us to provide you with a smooth, efficient, and customized 
+			| experience. specifically, we may use your spotify data to:
+		ol(type="i")
+			li feature a personalized pool of artists.
+			li follow artists and create playlists on spotify on your behalf.
+			li generate a personal account page.
+		br
+		h3 storage of your information
+		h4 cookies
+		p
+			| we use cookies to help customize the application and streamline your experience. most browsers are set to 
+			| accept cookies by default. only information that is already publicly accessible on your spotify profile will 
+			| be accessed and stored upon use of the application. you can remove or reject cookies, but note that such 
+			| action would affect the functionality of the application. 
+		br
+		h3 security of your information
+		p
+			| we respect your privacy to the utmost degree. to provide you with a safe and secure experience on the application, 
+			| we delete all the cookies we store during your session within an hour of their creation. furthermore, we ask you 
+			| to confirm your spotify credentials each time you log in to the application. while we have taken reasonable steps 
+			| to secure the personal information you provide to us, please be aware that, despite our efforts, no security measures 
+			| are perfect or impenetrable, and no method of data transmission can be guaranteed against any interception or other 
+			| type of misuse. any information disclosed online is vulnerable to interception or other type of misuse by unauthorized 
+			| parties. therefore, we cannot guarantee complete security of your spotify information.
+		br
+		h3 policy for children
+		p
+			| we do not knowingly process information from children under the age of 13. as the application depends exclusively 
+			| on data provided by the user through their spotify account, please direct all concerns about the handling of personal 
+			| data of users under the age of 13 to spotify technologies s.a. or spotify ab.
+		br
+		h3 options regarding your information
+		p
+			| you may at any time revoke the permissions you have granted to the application. simply access your spotify account, 
+			| go to the “apps” section, and remove access to the “spinder” application. 
+		br
+		h3 contact us
+		p
+			| thank you for reading our privacy policy. if you have any questions about this policy, please address mariel pacada by 
+			| emailing:
+		p(style="margin-bottom: 0;") mariel pacada
+		p
+			a(href="mailto:marielpacada08@gmail.com") marielpacada08@gmail.com
+		br
+		br
+		p we hope you enjoy spinder!
+	div.tabs
+		div.tab-button.likes(style="color: gray")
+			p.icon ♥
+			p.tag likes
+			a(href="/match")
+		div.tab-button.account
+			p.icon ✿
+			p.tag account
+			a(href="/account")
+		div.tab-button.discover(style="color: gray")
+			p.icon ♬
+			p.tag discover
+			a(href="/swipe")
