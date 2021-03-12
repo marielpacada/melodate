@@ -2,7 +2,6 @@
 global.fetch = require("node-fetch");
 const querystring = require('querystring');
 const cookieParser = require("cookie-parser");
-const FormData = require("form-data");
 const express = require("express");
 const request = require('request');
 const app = express();
@@ -86,15 +85,16 @@ app.get("/match", function (req, res) {
     var covers = req.cookies.covers;
     var titles = req.cookies.titles;
     var tracks = req.cookies.tracks; // track IDs
-    // if else block here
-    // if empty, then send no matches page (that has a link back to /login)
-    // if not empty, then proceed as usual
     try {
         var artists = cookieHandler(names, pics, ids, covers, titles, tracks);
+        if (artists[0].name.length === 0) {
+            res.render("no-picks");
+            return;
+        }
+        res.render("match", { likes: artists });
     } catch {
         res.render("error");
     }
-    res.render("match", { likes: artists });
 });
 
 app.get("/follow", async function (req, res) {
@@ -172,7 +172,7 @@ app.get("/account", async function (req, res) {
     res.render("account", { name: user_name, image: user_image });
 });
 
-app.get("/privacy", function (req, res) { 
+app.get("/privacy", function (req, res) {
     res.render("privacy");
 })
 

@@ -1,5 +1,5 @@
 {
-  "name": "spinder",
+  "name": "melodate",
   "version": "1.0.0",
   "description": "spotify tinder lol",
   "main": "app.js",
@@ -8,22 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marielpacada/spinder.git"
+    "url": "git+https://github.com/marielpacada/melodate.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/marielpacada/spinder/issues"
+    "url": "https://github.com/marielpacada/melodate/issues"
   },
-  "homepage": "https://github.com/marielpacada/spinder#readme",
+  "homepage": "https://github.com/marielpacada/melodate#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "form-data": "^2.3.3",
     "node-fetch": "^2.6.1",
     "pug": "^3.0.0",
     "request": "^2.88.2"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }
