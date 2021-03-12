@@ -23,7 +23,7 @@ app.set("query parser", "extended");
  * Redirects user to Spotify authorization page, then redirects back to web app after logging in with Spotify account.
  */
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + "/public/index.html");
+    res.render("index");
 });
 
 app.get('/login', function (req, res) {
