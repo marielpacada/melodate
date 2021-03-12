@@ -177,8 +177,12 @@ app.get("/privacy", function (req, res) {
 })
 
 
-/* Listening on PORT 3000 */
-app.listen(3000);
+/* Listening on PORT 3000 on local deployment */
+const PORT = process.env.PORT || 3000;
+app.listen(PORT);
+
+
+
 
 /**
  * Helper function (with inner private functions) to get all artists' information
