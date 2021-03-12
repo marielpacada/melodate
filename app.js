@@ -289,7 +289,7 @@ function getAllArtistInfo(options, token, callback) {
         var raw_track = data.tracks[0];
         var track_attrs = {};
         track_attrs["cover"] = raw_track.album.images[0].url; // album cover
-        track_attrs["title"] = raw_track.name.slice(0, 75);
+        track_attrs["title"] = raw_track.name.slice(0, 70);
         track_attrs["preview"] = raw_track.preview_url; // mp3 url
         track_attrs["trackID"] = raw_track.id;
 
