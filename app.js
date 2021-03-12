@@ -9,7 +9,7 @@ const app = express();
 /* Importing authorization IDs */
 const { my_client_id } = require('./secrets/auth.js');
 const { my_client_secret } = require('./secrets/auth.js');
-const redirect_uri = "http://localhost:3000/home";
+const redirect_uri = "https://melodate.herokuapp.com/home";
 
 /* Registering middleware and settings */
 app.use(express.static(__dirname + "/public"));
