@@ -43,10 +43,12 @@ $(function () {
         }
 
         if (Math.abs(pullDeltaX) >= decisionVal) {
-            $card.addClass("inactive");
             if ($card.attr("id") != "not-artist") {
                 $card.find("#top-track").find(".track-info").find(".track-player").find("audio").pause();
             }
+
+            $card.addClass("inactive");
+
             setTimeout(function () {
                 $card.addClass("done");
                 cardsCounter++;
