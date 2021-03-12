@@ -10,7 +10,6 @@ const app = express();
 /* Importing authorization IDs */
 const { my_client_id } = require('./secrets/auth.js');
 const { my_client_secret } = require('./secrets/auth.js');
-const { fileURLToPath } = require("url");
 const redirect_uri = "http://localhost:3000/home";
 
 /* Registering middleware and settings */
@@ -129,7 +128,7 @@ app.get("/playlist", async function (req, res) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            name: "playlist by spinder ♫",
+            name: "playlist by melodate ♫",
             description: "find your love at first note ♥"
         })
     });
