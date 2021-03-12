@@ -44,7 +44,6 @@ $(function () {
 
         if (Math.abs(pullDeltaX) >= decisionVal) {
             $card.addClass("inactive");
-            $card.find("#top-track").find(".track-info").find(".track-player").find("audio").pause();
 
             setTimeout(function () {
                 $card.addClass("done");
@@ -52,6 +51,10 @@ $(function () {
                 if (cardsCounter === numOfCards) {
                     cardsCounter = 0;
                     $(".artist-card").removeClass("below");
+                }
+
+                if ($card.attr("id") != "not-artist") {
+                    $card.find("#top-track").find(".track-info").find(".track-player").find("audio").pause();
                 }
             }, 300);
         }
