@@ -19,5 +19,5 @@ mixin card(artist)
 					img(src=artist.track.cover)
 				div.track-player(id=artist.track.trackID)
 					p #{artist.track.title}
-					video(controls name="media")
+					audio(controls)
 						source(src=artist.track.preview type="audio/mpeg")
