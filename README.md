@@ -19,4 +19,4 @@ i have a few ideas for improving the user experience, especially in user customi
 - express for node.js
 
 #### appreciation
-fun fact: i've never (and i don't intend to) downloaded or used any dating apps 😅 i would like to thank my official dating app consultant, lisa, for entertaining all my questions about tinder lol. another fun fact: this app was (un)originally called spinder in early design stages. like... spotify tinder. sigh.
+fun fact: i've never downloaded or used any dating apps 😅 i would like to thank my official dating app consultant, lisa, for entertaining all my questions about tinder lol. another fun fact: this app was (un)originally called spinder in early design stages. like... spotify tinder. sigh.
