@@ -1,6 +1,6 @@
 # melodate
 ### _find your love at first note_
-**melodate** is a mobile web app experience that allows the user to discover new artists in a fun, dating-app-esque way 🎶✨
+**melodate** is a mobile web app experience that allows the user to discover new artists à la online dating.
 
 #### motivation
 melodate came about as a way for me to automate and enhance my process in looking for new music. before building this product -- i would go to spotify, click on an aritst, go through each of their related artists, take some of _those_ artists' songs, and add the songs to a playlist. i grew tired of performing all these steps manually, and thus, the idea for melodate was born! 
