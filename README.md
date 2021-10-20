@@ -11,9 +11,6 @@ the melodate experience is unique to each user! the application prompts the user
 ## access
 melodate is now deployed on [https://melodate.herokuapp.com/](https://melodate.herokuapp.com/). the app currently is not designed for desktop use, as i wanted to capture a dating-app-like impression. make sure to access the site via a mobile device! and of course, you must be a spotify user to use melodate.
 
-## improvements
-i have a few ideas for improving the user experience, especially in user customization. i am currently conducting user interviews -- melodate version 2.0 coming soon!
-
 ## tech used
 - [spotify](https://developer.spotify.com/documentation/web-api/) api
 - express for node.js
